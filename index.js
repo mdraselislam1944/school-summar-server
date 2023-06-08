@@ -30,6 +30,12 @@ async function run() {
       res.send(result);
     })
 
+    const instructors=client.db('languageLearningDB').collection('Instructors')
+    app.get('/instructors',async(req,res)=>{
+      const result=await instructors.find().toArray();
+      res.send(result);
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
