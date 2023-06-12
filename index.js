@@ -32,11 +32,28 @@ async function run() {
     })
 
     const instructors = client.db('languageLearningDB').collection('Instructors')
+    app.post('/instructors', async (req, res) => {
+      const instructor = req.body;
+      const result = await instructors.insertOne(instructor);
+      res.send(result);
+    })
+
     app.get('/instructors', async (req, res) => {
       const result = await instructors.find().toArray();
       res.send(result);
     })
-
+    app.get('/instructors/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await instructors.find(query).toArray();
+      res.send(result);
+    })
+    app.delete('/instructors/:id',async(req,res)=>{
+      const id=req.params.id;
+      const query={_id:new ObjectId(id)}
+      const result=await instructors.deleteOne(query);
+      res.send(result);
+    })
     const discountClasses = client.db('languageLearningDB').collection('discounts');
     app.get('/discountClasses', async (req, res) => {
       const result = await discountClasses.find().toArray();
