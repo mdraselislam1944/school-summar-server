@@ -54,6 +54,31 @@ async function run() {
       const result=await instructors.deleteOne(query);
       res.send(result);
     })
+    app.get('/instructor/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await instructors.findOne({ _id:new ObjectId(id) });
+      res.send(result);
+  })
+
+    app.patch('/instructors/:id',async(req,res)=>{
+      const id=req.params.id;
+      const instructor=req.body;
+      const filter={_id:new ObjectId(id)}
+      const option={upsert:true}
+      const updateInstructor={
+        $set:{
+          className:instructor.className,
+          seat:instructor.seat,
+          price:instructor.price,
+          image:instructor.image,
+        }
+      }
+      const result=await instructors.updateOne(filter,updateInstructor,option);
+      res.send(result);
+    })
+
+
+
     const discountClasses = client.db('languageLearningDB').collection('discounts');
     app.get('/discountClasses', async (req, res) => {
       const result = await discountClasses.find().toArray();
@@ -65,6 +90,9 @@ async function run() {
       const result = await discountClasses.findOne({ _id:new ObjectId(id) });
       res.send(result);
   })
+
+
+
 
 
     const students = client.db('languageLearningDB').collection('students');
