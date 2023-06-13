@@ -1,14 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const stripe = require('stripe')('sk_test_51NEmG3IxzytApYUlezdVCVvSiGKYTMPRcizhPcJbk70FNEUHtQQ4Zo6Oypdn7Jmpir3PLHlhMOx0zLRuvL0dzqhA00ZSSQyNYP')
+const stripe = require('stripe')(process.env.Stripe_secret)
 const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-const uri = "mongodb+srv://summer-school-site:8zCDlFYQCcluSQ7M@cluster11.cpm08j1.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.SECRET_User}:${process.env.SECRET_PASS}@cluster11.cpm08j1.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -42,12 +43,22 @@ async function run() {
       const result = await instructors.find().toArray();
       res.send(result);
     })
-    app.get('/instructors/:email', async (req, res) => {
+
+    app.get('/instructors/:id', async (req, res) => {
+      const id = req.params.id;
+      const result = await instructors.findOne({ _id:new ObjectId(id) });
+      res.send(result);
+  })
+
+    app.get('/instructor/:email', async (req, res) => {
       const email = req.params.email;
+      console.log(email);
       const query = { email: email };
       const result = await instructors.find(query).toArray();
       res.send(result);
     })
+
+
     app.delete('/instructors/:id',async(req,res)=>{
       const id=req.params.id;
       const query={_id:new ObjectId(id)}
@@ -160,21 +171,6 @@ async function run() {
       res.send(result);
     })
 
-    // app.patch('/students/:email',async(req,res)=>{
-    //   const email = req.params.email;
-    //   const query = { email: email };
-    //   const selectedId=req.body.id;
-    //   const option={upsert:true}
-    //   const updateUser={
-    //     $set:{
-    //       id:selectedId,
-    //     }
-    //   }
-    //   const result=await students.updateOne(query,updateUser,option);
-    //   res.send(result);
-    // })
-
-    // --------------student payment system --------------------
 
     app.post('/create-payment-intent', async (req, res) => {
       const { price } = req.body;
@@ -203,22 +199,22 @@ async function run() {
       res.send(result);
     })
 
-    app.patch('/studentPayment/:id',async(req,res)=>{
-      const id=req.params.id;
-      const payment=req.body;
-      console.log(id,payment)
-      const filter={_id: id}
-      const option={upsert:true}
-      const updatePayment={
-        $set:{
-          paymentId:payment.id,
-        }
-      }
-      const result=await studentPayment.updateOne(filter,updatePayment,option);
+
+    app.patch('/studentPayment/:id', async (req, res) => {
+      const id = req.params.id;
+      const payment = req.body;
+      console.log(id, payment);
+      const filter = { _id: id };
+      const option = { upsert: true };
+      const updatePayment = {
+        $set: {
+          paymentId: payment.id,
+        },
+      };
+      const result = await studentPayment.updateOne(filter, updatePayment, option);
       res.send(result);
-    })
-
-
+    });
+    
 
 
 
