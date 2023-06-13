@@ -77,7 +77,20 @@ async function run() {
       res.send(result);
     })
 
-
+    // Feedback
+    app.patch('/feedback/:id',async(req,res)=>{
+      const id=req.params.id;
+      const instructor=req.body;
+      const filter={_id:new ObjectId(id)}
+      const option={upsert:true}
+      const updateInstructor={
+        $set:{
+          feedback:instructor.feedback,
+        }
+      }
+      const result=await instructors.updateOne(filter,updateInstructor,option);
+      res.send(result);
+    })
     app.patch('/instructor/:id',async(req,res)=>{
       const id=req.params.id;
       const instructor=req.body;
