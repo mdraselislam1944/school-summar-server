@@ -107,6 +107,24 @@ async function run() {
       res.send(result);
     })
 
+
+    app.patch('/students/:id',async(req,res)=>{
+      const id=req.params.id;
+      const student=req.body;
+
+      console.log(id,student)
+      const filter={_id: new ObjectId(id)}
+      const option={upsert:true}
+      const updateStudent={
+        $set:{
+          role:student.role,
+        }
+      }
+      const result=await students.updateOne(filter,updateStudent,option);
+      res.send(result);
+    })
+
+
     app.get('/students/:email', async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
@@ -142,6 +160,38 @@ async function run() {
         clientSecret: paymentIntent.client_secret
       })
     })
+
+    const studentPayment = client.db('languageLearningDB').collection('studentPayment')
+
+    app.post('/studentPayment',async(req,res)=>{
+      const Payment=req.body;
+      const result=await studentPayment.insertOne(Payment);
+      res.send(result);
+    })
+    app.get('/studentPayment/:email',async(req,res)=>{
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await studentPayment.find(query).toArray();
+      res.send(result);
+    })
+
+    app.patch('/studentPayment/:id',async(req,res)=>{
+      const id=req.params.id;
+      const payment=req.body;
+      console.log(id,payment)
+      const filter={_id: id}
+      const option={upsert:true}
+      const updatePayment={
+        $set:{
+          paymentId:payment.id,
+        }
+      }
+      const result=await studentPayment.updateOne(filter,updatePayment,option);
+      res.send(result);
+    })
+
+
+
 
 
 
