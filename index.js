@@ -78,6 +78,21 @@ async function run() {
     })
 
 
+    app.patch('/instructor/:id',async(req,res)=>{
+      const id=req.params.id;
+      const instructor=req.body;
+      const filter={_id:new ObjectId(id)}
+      const option={upsert:true}
+      const updateInstructor={
+        $set:{
+          status:instructor.status,
+        }
+      }
+      const result=await instructors.updateOne(filter,updateInstructor,option);
+      res.send(result);
+    })
+
+
 
     const discountClasses = client.db('languageLearningDB').collection('discounts');
     app.get('/discountClasses', async (req, res) => {
