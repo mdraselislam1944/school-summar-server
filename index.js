@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     const schoolClass = client.db('languageLearningDB').collection('languageLearning');
 
 
@@ -203,12 +203,12 @@ async function run() {
     app.patch('/studentPayment/:id', async (req, res) => {
       const id = req.params.id;
       const payment = req.body;
-      console.log(id, payment);
+      console.log(id, payment.paymentId);
       const filter = { _id: id };
       const option = { upsert: true };
       const updatePayment = {
         $set: {
-          paymentId: payment.id,
+          paymentId: payment.paymentId,
         },
       };
       const result = await studentPayment.updateOne(filter, updatePayment, option);
