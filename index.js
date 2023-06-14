@@ -43,7 +43,6 @@ async function run() {
       const result = await instructors.find().toArray();
       res.send(result);
     })
-
     app.get('/instructors/:id', async (req, res) => {
       const id = req.params.id;
       const result = await instructors.findOne({ _id:new ObjectId(id) });
@@ -58,6 +57,12 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/popularInstructor',async(req,res)=>{
+      const popularInstructor = await instructors.find( { seat: { $lte: "20" } } ).toArray();
+      console.log(popularInstructor)
+      res.send(popularInstructor);
+    })
+    
 
     app.delete('/instructors/:id',async(req,res)=>{
       const id=req.params.id;
@@ -189,6 +194,7 @@ async function run() {
 
     app.post('/studentPayment',async(req,res)=>{
       const Payment=req.body;
+      console.log(Payment)
       const result=await studentPayment.insertOne(Payment);
       res.send(result);
     })
@@ -198,7 +204,22 @@ async function run() {
       const result = await studentPayment.find(query).toArray();
       res.send(result);
     })
+    
 
+    app.delete('/studentPayment/:id', async (req, res) => {
+      const id = req.params.id;
+      const query={_id:new ObjectId(id)}
+      const result=await studentPayment.deleteOne(query);
+      res.send(result);
+    });
+
+    app.get('/paymentStatus/:id', async (req, res) => {
+      const id = req.params.id;
+      const query={_id: id}
+      const result=await studentPayment.findOne(query);
+      res.send(result);
+  })
+    
 
     app.patch('/studentPayment/:id', async (req, res) => {
       const id = req.params.id;
